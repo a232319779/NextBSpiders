@@ -27,6 +27,8 @@ else:
     g_proxy = None
 
 logging.basicConfig(level=logging.INFO)
+logging.getLogger('telethon').setLevel(level=logging.INFO)
+logging.getLogger('scrapy').setLevel(level=logging.INFO)
 
 
 # TODO: make the hardcode code (e.g. BASE_PATH) as configurable in settings files
@@ -220,10 +222,14 @@ class TelegramAPIs(object):
                 username = message.sender.username
                 username = username if username else ''
                 m['user_name'] = message.sender.username
-                first_name = message.sender.first_name
-                last_name = message.sender.last_name
-                first_name = first_name if first_name else ''
-                last_name = ' '+ last_name if last_name else ''
+                if isinstance(message.sender, Channel):
+                    first_name = message.sender.title
+                    last_name = ''
+                else:
+                    first_name = message.sender.first_name
+                    last_name = message.sender.last_name
+                    first_name = first_name if first_name else ''
+                    last_name = ' '+ last_name if last_name else ''
                 m['nick_name'] = '{0}{1}'.format(first_name, last_name)
                 m['chat_id'] = chat.id
                 m['postal_time'] = message.date.strftime('%Y-%m-%d %H:%M:%S')
