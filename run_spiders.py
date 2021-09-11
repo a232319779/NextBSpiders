@@ -59,7 +59,8 @@ def main():
     nb = NextBTGDB()
     chat_id = config_js.get('group', {}).get('group_id')
     message_data = nb.search_message(chat_id=chat_id)
-    config_js['group']['last_message_id'] = message_data.message_id
+    if message_data:
+        config_js['group']['last_message_id'] = message_data.message_id
     param_base64 = base64.b64encode(json.dumps(config_js).encode()).decode()
     name = 'telegramScanMessages'
     cmd = 'scrapy crawl {name} -L INFO -a param={param_base64}'.format(name=name, param_base64=param_base64)

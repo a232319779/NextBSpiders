@@ -218,19 +218,23 @@ class TelegramAPIs(object):
                     continue
                 m = dict()
                 m['message_id'] = message.id
-                m['user_id'] = message.sender.id
-                username = message.sender.username
-                username = username if username else ''
-                m['user_name'] = message.sender.username
-                if isinstance(message.sender, Channel):
-                    first_name = message.sender.title
-                    last_name = ''
-                else:
-                    first_name = message.sender.first_name
-                    last_name = message.sender.last_name
-                    first_name = first_name if first_name else ''
-                    last_name = ' '+ last_name if last_name else ''
-                m['nick_name'] = '{0}{1}'.format(first_name, last_name)
+                m['user_id'] = -1
+                m['user_name'] = ''
+                m['nick_name'] = ''
+                if message.sender:
+                    m['user_id'] = message.sender.id
+                    username = message.sender.username
+                    username = username if username else ''
+                    m['user_name'] = message.sender.username
+                    if isinstance(message.sender, Channel):
+                        first_name = message.sender.title
+                        last_name = ''
+                    else:
+                        first_name = message.sender.first_name
+                        last_name = message.sender.last_name
+                        first_name = first_name if first_name else ''
+                        last_name = ' '+ last_name if last_name else ''
+                    m['nick_name'] = '{0}{1}'.format(first_name, last_name)
                 m['chat_id'] = chat.id
                 m['postal_time'] = message.date.strftime('%Y-%m-%d %H:%M:%S')
                 m['message'] = content
