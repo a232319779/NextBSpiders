@@ -57,7 +57,7 @@ class TelegramScanMessages(scrapy.Spider, ABC):
             limit = self.group['limit']
             offset_date = self.group['offset_date']
             offset_date = offset_date if offset_date else None
-            chat = telegram_app.get_dialog(int(group_telegram_id), is_more=False)
+            chat = telegram_app.get_dialog(group_telegram_id, is_more=False)
             if chat:
                 param = {
                     'limit': limit,

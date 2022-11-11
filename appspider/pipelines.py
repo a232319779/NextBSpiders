@@ -35,15 +35,18 @@ class AppspiderPostgreslPipeline(object):
     def process_item(self, item, spider):
         if len(self.datas) >= self.push_number:
             for data in self.datas:
-                new_messaeg = TelegramMessage()
-                new_messaeg.message_id = data.get('message_id', -1)
-                new_messaeg.chat_id = data.get('chat_id', -1)
-                new_messaeg.user_id = data.get('user_id', -1)
-                new_messaeg.user_name = data.get('user_name', '')
-                new_messaeg.nick_name = data.get('nick_name', '')
-                new_messaeg.postal_time = data.get('postal_time', '')
-                new_messaeg.message = data.get('message', '')
-                self.session_maker.add(new_messaeg)
+                new_message = TelegramMessage()
+                new_message.message_id = data.get('message_id', -1)
+                new_message.chat_id = data.get('chat_id', -1)
+                new_message.user_id = data.get('user_id', -1)
+                new_message.user_name = data.get('user_name', '')
+                new_message.nick_name = data.get('nick_name', '')
+                new_message.postal_time = data.get('postal_time')
+                new_message.reply_to_msg_id = data.get('reply_to_msg_id', -1)
+                new_message.from_name = data.get('from_name', '')
+                new_message.from_time = data.get('from_time')
+                new_message.message = data.get('message', '')
+                self.session_maker.add(new_message)
             self.session_maker.commit()
             self.datas = []
         else:
@@ -54,15 +57,18 @@ class AppspiderPostgreslPipeline(object):
     def close_spider(self, spider):
         if len(self.datas) > 0:
             for data in self.datas:
-                new_messaeg = TelegramMessage()
-                new_messaeg.message_id = data.get('message_id', -1)
-                new_messaeg.chat_id = data.get('chat_id', -1)
-                new_messaeg.user_id = data.get('user_id', -1)
-                new_messaeg.user_name = data.get('user_name', '')
-                new_messaeg.nick_name = data.get('nick_name', '')
-                new_messaeg.postal_time = data.get('postal_time', '')
-                new_messaeg.message = data.get('message', '')
-                self.session_maker.add(new_messaeg)
+                new_message = TelegramMessage()
+                new_message.message_id = data.get('message_id', -1)
+                new_message.chat_id = data.get('chat_id', -1)
+                new_message.user_id = data.get('user_id', -1)
+                new_message.user_name = data.get('user_name', '')
+                new_message.nick_name = data.get('nick_name', '')
+                new_message.postal_time = data.get('postal_time')
+                new_message.reply_to_msg_id = data.get('reply_to_msg_id', -1)
+                new_message.from_name = data.get('from_name', '')
+                new_message.from_time = data.get('from_time')
+                new_message.message = data.get('message', '')
+                self.session_maker.add(new_message)
             self.session_maker.commit()
             self.datas = []
         self.session_maker.close_all()

@@ -9,18 +9,21 @@ import scrapy
 
 from sqlalchemy import Column, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.sql.sqltypes import INTEGER
+from sqlalchemy.sql.sqltypes import DateTime, BIGINT
 
 Base = declarative_base()
 
 class TelegramMessage(Base):
     __tablename__ = 'nextb_telegram_messages'
 
-    id = Column(INTEGER(), primary_key=True, unique=True, autoincrement=True)
-    message_id = Column(INTEGER())
-    chat_id = Column(INTEGER())
-    user_id = Column(INTEGER())
+    id = Column(BIGINT(), primary_key=True, unique=True, autoincrement=True)
+    message_id = Column(BIGINT())
+    chat_id = Column(BIGINT())
+    user_id = Column(BIGINT())
     user_name = Column(String(255))
     nick_name = Column(String(255))
-    postal_time = Column(String(255))
+    postal_time = Column(DateTime)
+    reply_to_msg_id = Column(BIGINT())
+    from_name = Column(String(255))
+    from_time = Column(DateTime)
     message = Column(String(5096))
