@@ -5,6 +5,8 @@ __pycache__/
 
 datas/
 myconfigs/
+sessions/
+*.db
 
 # C extensions
 *.so

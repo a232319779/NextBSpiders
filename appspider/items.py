@@ -7,16 +7,20 @@
 
 import scrapy
 
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.sql.sqltypes import DateTime, BIGINT
+from sqlalchemy.sql.sqltypes import DateTime, BIGINT, Integer
 
 Base = declarative_base()
 
-class TelegramMessage(Base):
-    __tablename__ = 'nextb_telegram_messages'
 
-    id = Column(BIGINT(), primary_key=True, unique=True, autoincrement=True)
+class TelegramMessage(Base):
+    __tablename__ = "nextb_telegram_messages"
+
+    # postgresql
+    # id = Column(BIGINT(), primary_key=True, unique=True, autoincrement=True)
+    # sqlite
+    id = Column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True)
     message_id = Column(BIGINT())
     chat_id = Column(BIGINT())
     user_id = Column(BIGINT())
