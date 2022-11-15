@@ -14,7 +14,8 @@ from scrapy import cmdline
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from appspider.items import TelegramMessage
+from appspider.spiders.telegramspider.telegramAPIs import TelegramAPIs
+from appspider.items import TelegramMessage, Base
 from appspider.configs.postgreconfig import db_config
 
 
@@ -43,6 +44,10 @@ class NextBTGDB:
         if self.session_maker is None:
             self.session_maker = scoped_session(sessionmaker(autoflush=True, autocommit=False,
                                                              bind=self.engine))
+
+    # 创建表
+    def create_table(self):
+        Base.metadata.create_all(self.engine)
     
     def search_message(self, chat_id):
         data = self.session_maker.query(TelegramMessage).filter(TelegramMessage.chat_id == chat_id).order_by(TelegramMessage.id.desc()).limit(1)
@@ -53,18 +58,45 @@ class NextBTGDB:
     
 
 def main():
+    # 创建表
+    # nb = NextBTGDB()
+    # nb.create_table()
+    # 登录tg账户,生成登录文件
     with open(sys.argv[1], 'r') as f:
         data = f.read()
     config_js = json.loads(data)
-    nb = NextBTGDB()
-    chat_id = config_js.get('group', {}).get('group_id')
-    message_data = nb.search_message(chat_id=chat_id)
-    if message_data:
-        config_js['group']['last_message_id'] = message_data.message_id
-    param_base64 = base64.b64encode(json.dumps(config_js).encode()).decode()
-    name = 'telegramScanMessages'
-    cmd = 'scrapy crawl {name} -L INFO -a param={param_base64}'.format(name=name, param_base64=param_base64)
-    cmdline.execute(cmd.split())
+    ta = TelegramAPIs()
+    ta.init_client(session_name=config_js.get('session_name'), api_id=config_js.get('api_id'), api_hash=config_js.get('api_hash'))
+    # 删除所有聊天对话框
+    # ta.delete_all_dialog()
+    # 获取对话框信息
+    dialogs = list()
+    for dialog in ta.get_dialog_list():
+        dialogs.append(dialog)
+    print(json.dumps(dialogs, ensure_ascii=False))
+    # 测试爬取消息
+    # group = config_js.get('group')
+    # chat = ta.get_dialog(group.get('group_id'), is_more=False)
+    # param = {
+    #     'limit': group.get('limit'),
+    #     'offset_date': None,
+    #     'last_message_id': group.get('last_message_id')
+    # }
+    # for data in ta.scan_message(chat, **param):
+    #     print(data)
+    # ta.close_client()
+    # with open(sys.argv[1], 'r') as f:
+    #     data = f.read()
+    # config_js = json.loads(data)
+    # nb = NextBTGDB()
+    # chat_id = config_js.get('group', {}).get('group_id')
+    # message_data = nb.search_message(chat_id=chat_id)
+    # if message_data:
+    #     config_js['group']['last_message_id'] = message_data.message_id
+    # param_base64 = base64.b64encode(json.dumps(config_js).encode()).decode()
+    # name = 'telegramScanMessages'
+    # cmd = 'scrapy crawl {name} -L INFO -a param={param_base64}'.format(name=name, param_base64=param_base64)
+    # cmdline.execute(cmd.split())
 
 if __name__ == '__main__':
     main()

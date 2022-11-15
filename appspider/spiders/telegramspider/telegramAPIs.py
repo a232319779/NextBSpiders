@@ -107,6 +107,29 @@ class TelegramAPIs(object):
 
         return result_json
 
+    def delete_all_dialog(self):
+        for dialog in self.client.get_dialogs():
+            # 退出频道或群组
+            if hasattr(dialog.entity, 'title'):
+                chat = dialog.entity
+                self.client.delete_dialog(chat)
+                print('已离开<{}>群组'.format(dialog.entity.title))
+            # 删除delete account
+            elif dialog.name == '':
+                chat = dialog.entity
+                self.client.delete_dialog(chat)
+                print('已删除Deleted Account用户对话框')
+            elif ' ' in dialog.name:
+                chat = dialog.entity
+                self.client.delete_dialog(chat)
+                print('已删除{}用户对话框'.format(dialog.name))
+            else:
+                chat = dialog.entity
+                self.client.delete_dialog(chat)
+                print('已删除{}用户对话框'.format(dialog.name))
+
+
+
     def get_me(self):
         myself = self.client.get_me()
         return myself
@@ -218,9 +241,12 @@ class TelegramAPIs(object):
                     continue
                 m = dict()
                 m['message_id'] = message.id
-                m['user_id'] = -1
+                m['user_id'] = 0
                 m['user_name'] = ''
                 m['nick_name'] = ''
+                m['reply_to_msg_id'] = 0
+                m['from_name'] = ''
+                m['from_time'] = datetime.datetime.fromtimestamp(657224281)
                 if message.sender:
                     m['user_id'] = message.sender.id
                     username = message.sender.username
@@ -235,8 +261,14 @@ class TelegramAPIs(object):
                         first_name = first_name if first_name else ''
                         last_name = ' '+ last_name if last_name else ''
                     m['nick_name'] = '{0}{1}'.format(first_name, last_name)
+                if message.is_reply:
+                    m['reply_to_msg_id'] = message.reply_to_msg_id
+                if message.forward:
+                    m['from_name'] = message.forward.from_name
+                    m['from_time'] = message.forward.date
                 m['chat_id'] = chat.id
-                m['postal_time'] = message.date.strftime('%Y-%m-%d %H:%M:%S')
+                # m['postal_time'] = message.date.strftime('%Y-%m-%d %H:%M:%S')
+                m['postal_time'] = message.date
                 m['message'] = content
                 tick += 1
                 if tick >= waterline:
