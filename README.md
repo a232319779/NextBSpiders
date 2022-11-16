@@ -67,3 +67,22 @@ pip install NextBSpiders
 ## 注意事项
 
 1. 每个telegram爬虫配置文件中的`session_name`和`sqlite_db_name`需要独立使用，避免出现`sqlite`数据库读写暂用问题
+2. 默认执行`nextb-telegram-run-spider`命令时，会在当前目录创建一个`scrapy.cfg`文件用以保证`scrapy`爬虫的执行环境。不排除在某些情况下，可能需要**在执行`nextb-telegram-run-spider.exe -c $config.json`的目录下，手动创建一个`scrapy.cfg`文件**
+
+## scrapy.cfg
+
+scrapy.cfg内容如下，避免执行`scrapy`出错
+
+```
+# Automatically created by: scrapy startproject
+#
+# For more information about the [deploy] section see:
+# https://scrapyd.readthedocs.io/en/latest/deploy.html
+
+[settings]
+default = NextBSpiders.settings
+```
+
+## 数据库示例
+
+![](https://github.com/a232319779/NextBSpiders/blob/master/pictures/example.png)

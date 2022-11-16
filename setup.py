@@ -19,6 +19,8 @@ def do_setup(**kwargs):
 
 long_description = """
 
+# NextB 爬虫
+
 基于scrapy框架的爬虫项目
 
 ## 准备
@@ -86,11 +88,29 @@ pip install NextBSpiders
 ## 注意事项
 
 1. 每个telegram爬虫配置文件中的`session_name`和`sqlite_db_name`需要独立使用，避免出现`sqlite`数据库读写暂用问题
+2. 默认执行`nextb-telegram-run-spider`命令时，会在当前目录创建一个`scrapy.cfg`文件用以保证`scrapy`爬虫的执行环境。不排除在某些情况下，可能需要**在执行`nextb-telegram-run-spider.exe -c $config.json`的目录下，手动创建一个`scrapy.cfg`文件**
+
+## scrapy.cfg
+
+scrapy.cfg内容如下，避免执行`scrapy`出错
+
+```
+# Automatically created by: scrapy startproject
+#
+# For more information about the [deploy] section see:
+# https://scrapyd.readthedocs.io/en/latest/deploy.html
+
+[settings]
+default = NextBSpiders.settings
+```
+
+## 数据库示例
+
 """
 
 do_setup(
     name="NextBSpiders",
-    version="1.0.0",
+    version="1.0.1",
     author="ddvv",
     author_email="dadavivi512@gmail.com",
     description="基于scrapy的telegram爬虫",
@@ -112,13 +132,13 @@ do_setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.6,<3.9",
     keywords=[],
     license="MIT",
     include_package_data=True,
     install_requires=[
+        "pyOpenSSL==22.0.0",
         "Scrapy==2.6.1",
-        "setuptools==58.0.4",
         "SQLAlchemy==1.4.31",
         "Telethon==1.24.0",
         "Twisted==22.4.0",
