@@ -6,6 +6,7 @@ __pycache__/
 datas/
 myconfigs/
 sessions/
+dbs/
 *.db
 
 # C extensions

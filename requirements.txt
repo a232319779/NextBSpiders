@@ -1,0 +1,6 @@
+Scrapy==2.6.1
+setuptools==58.0.4
+SQLAlchemy==1.4.31
+Telethon==1.24.0
+Twisted==22.4.0
+pysocks==1.7.1

@@ -13,26 +13,25 @@ import logging
 from random import randint
 from telethon import TelegramClient, sync
 from telethon.tl.functions.channels import GetFullChannelRequest, JoinChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest, CheckChatInviteRequest, GetFullChatRequest
+from telethon.tl.functions.messages import (
+    ImportChatInviteRequest,
+    CheckChatInviteRequest,
+    GetFullChatRequest,
+)
 from telethon.tl.functions.contacts import DeleteContactsRequest, GetContactsRequest
 from telethon.tl.types import ChatInviteAlready, ChatInvite
 from telethon.tl.types import Message
 from telethon.tl.types import Channel, Chat
 
 
-is_local = True
-if is_local:
-    g_proxy = ("socks5", '127.0.0.1', 7890)
-else:
-    g_proxy = None
-
 logging.basicConfig(level=logging.INFO)
-logging.getLogger('telethon').setLevel(level=logging.INFO)
-logging.getLogger('scrapy').setLevel(level=logging.INFO)
+logging.getLogger("telethon").setLevel(level=logging.INFO)
+logging.getLogger("scrapy").setLevel(level=logging.INFO)
 
 
 # TODO: make the hardcode code (e.g. BASE_PATH) as configurable in settings files
 # TODO: use Sqlacademy ORM instead operation such data in low-level
+
 
 class TelegramAPIs(object):
     def __init__(self):
@@ -47,8 +46,9 @@ class TelegramAPIs(object):
         :param proxy: socks代理，默认为空
         """
         if proxy is None:
-            proxy = g_proxy
-        self.client = TelegramClient(session_name, api_id, api_hash, proxy=proxy)
+            self.client = TelegramClient(session_name, api_id, api_hash)
+        else:
+            self.client = TelegramClient(session_name, api_id, api_hash, proxy=proxy)
         self.client.start()
 
     def close_client(self):
@@ -75,8 +75,12 @@ class TelegramAPIs(object):
         # 每个加组的操作都休眠10秒先，降低速率
         time.sleep(10)
         chat_id = 0
-        result = 'Failed'
-        result_json = {'data': {'id': chat_id, 'group_name': invite}, 'result': result, 'reason': ''}
+        result = "Failed"
+        result_json = {
+            "data": {"id": chat_id, "group_name": invite},
+            "result": result,
+            "reason": "",
+        }
         try:
             # Checking a link without joining
             # 检测私有频道或群组时，由于传入的是hash，可能会失败(已测试，除非是被禁止的，否则也会成功)
@@ -84,61 +88,78 @@ class TelegramAPIs(object):
             if isinstance(updates, ChatInviteAlready):
                 chat_id = updates.chat.id
                 # chat = updates.chat
-                result = 'Done'
+                result = "Done"
             elif isinstance(updates, ChatInvite):
                 # Joining a private chat or channel
                 updates = self.client(ImportChatInviteRequest(invite))
                 # updates = self.client(CheckChatInviteRequest(invite))
                 chat_id = updates.chats[0].id
                 # chat = updates.chats[0]
-                result = 'Done'
+                result = "Done"
         except Exception as e:
             try:
                 # Joining a public chat or channel
                 updates = self.client(JoinChannelRequest(invite))
-                result = 'Done'
+                result = "Done"
             except Exception as ee:
-                result_json['reason'] = str(ee)
+                result_json["reason"] = str(ee)
                 return result_json
             chat_id = updates.chats[0].id
             # chat = updates.chats[0]
-        result_json['data']['id'] = chat_id
-        result_json['result'] = result
+        result_json["data"]["id"] = chat_id
+        result_json["result"] = result
 
         return result_json
 
-    def delete_all_dialog(self):
+    def delete_all_dialog(self, is_all=0):
+        """
+        删除对话框
+        """
         for dialog in self.client.get_dialogs():
+            # like "4721 4720"、"5909 5908"
+            name = dialog.name
+            is_new_user = False
+            if " " in name and ("1" in name or "3" in name or "6" in name):
+                is_new_user = True
             # 退出频道或群组
-            if hasattr(dialog.entity, 'title'):
+            if is_all and hasattr(dialog.entity, "title"):
                 chat = dialog.entity
                 self.client.delete_dialog(chat)
-                print('已离开<{}>群组'.format(dialog.entity.title))
+                print("已离开<{}>群组".format(dialog.entity.title))
             # 删除delete account
-            elif dialog.name == '':
+            elif dialog.name == "":
                 chat = dialog.entity
                 self.client.delete_dialog(chat)
-                print('已删除Deleted Account用户对话框')
-            elif ' ' in dialog.name:
+                print("已删除Deleted Account用户对话框")
+            elif is_new_user:
                 chat = dialog.entity
                 self.client.delete_dialog(chat)
-                print('已删除{}用户对话框'.format(dialog.name))
+                print("已删除{}用户对话框".format(dialog.name))
+            elif is_all:
+                chat = dialog.entity
+                self.client.delete_dialog(chat)
+                print("已删除{}用户对话框".format(dialog.name))
             else:
-                chat = dialog.entity
-                self.client.delete_dialog(chat)
-                print('已删除{}用户对话框'.format(dialog.name))
-
-
+                pass
 
     def get_me(self):
+        """
+        获取当前账户信息
+        """
         myself = self.client.get_me()
         return myself
 
     def get_contacts(self):
+        """
+        获取联系人
+        """
         contacts = self.client(GetContactsRequest(0))
         return contacts
 
     def delete_contact(self, ids):
+        """
+        删除联系人
+        """
         self.client(DeleteContactsRequest(ids))
 
     def get_dialog_list(self):
@@ -149,10 +170,10 @@ class TelegramAPIs(object):
         """
         for dialog in self.client.get_dialogs():
             # 确保每次数据的准确性
-            result_json = {'result': 'success', 'reason': 'ok'}
+            result_json = {"result": "success", "reason": "ok"}
             out = {}
             # 只爬取频道或群组，排除个人
-            if hasattr(dialog.entity, 'title'):
+            if hasattr(dialog.entity, "title"):
                 chat = dialog.entity
                 if isinstance(chat, Channel):
                     channel_full = self.client(GetFullChannelRequest(chat))
@@ -164,7 +185,7 @@ class TelegramAPIs(object):
                     channel_full = self.client(GetFullChatRequest(chat.id))
                     member_count = channel_full.chats[0].participants_count
                     # channel_description = channel_full.full_chat.about
-                    channel_description = ''
+                    channel_description = ""
                     username = None
                     megagroup = True
                 else:
@@ -174,18 +195,18 @@ class TelegramAPIs(object):
                 # 实际测试发现(TaiwanNumberOne该群组)，megagroup表示频道或群组，true表示群，false表示频道
                 # democracy: 暂时不清楚什么意思
                 out = {
-                    'id': chat.id,
-                    'title': chat.title,
-                    'username': username,
+                    "id": chat.id,
+                    "title": chat.title,
+                    "username": username,
                     # 'democracy': channel_full.chats[0].democracy,
-                    'megagroup': 'channel' if megagroup else 'group',
-                    'member_count': member_count,
-                    'channel_description': channel_description,
-                    'is_public': 1 if username else 0,
-                    'join_date': chat.date.strftime('%Y-%m-%d %H:%M:%S+%Z'),
-                    'unread_count': dialog.unread_count
+                    "megagroup": "channel" if megagroup else "group",
+                    "member_count": member_count,
+                    "channel_description": channel_description,
+                    "is_public": 1 if username else 0,
+                    "join_date": chat.date.strftime("%Y-%m-%d %H:%M:%S+%Z"),
+                    "unread_count": dialog.unread_count,
                 }
-                result_json['data'] = out
+                result_json["data"] = out
                 yield result_json
 
     def get_dialog(self, chat_id, is_more=False):
@@ -217,19 +238,23 @@ class TelegramAPIs(object):
         """
         tick = 0
         waterline = randint(5, 20)
-        limit = kwargs['limit']
-        min_id = kwargs['last_message_id']
+        limit = kwargs["limit"]
+        min_id = kwargs["last_message_id"]
         # 默认只能从最远开始爬取
         offset_date = None
-        if 0 and kwargs['offset_date']:
-            offset_date = datetime.datetime.strptime(kwargs['offset_date'], '%Y-%m-%d %H:%M:%S')
+        if 0 and kwargs["offset_date"]:
+            offset_date = datetime.datetime.strptime(
+                kwargs["offset_date"], "%Y-%m-%d %H:%M:%S"
+            )
         count = 0
-        for message in self.client.iter_messages(chat,
-                                                 limit=limit,
-                                                 offset_date=offset_date,
-                                                 offset_id=min_id,
-                                                 wait_time=1,
-                                                 reverse=True):
+        for message in self.client.iter_messages(
+            chat,
+            limit=limit,
+            offset_date=offset_date,
+            offset_id=min_id,
+            wait_time=1,
+            reverse=True,
+        ):
 
             if isinstance(message, Message):
                 content = ""
@@ -240,36 +265,36 @@ class TelegramAPIs(object):
                 if content == "":
                     continue
                 m = dict()
-                m['message_id'] = message.id
-                m['user_id'] = 0
-                m['user_name'] = ''
-                m['nick_name'] = ''
-                m['reply_to_msg_id'] = 0
-                m['from_name'] = ''
-                m['from_time'] = datetime.datetime.fromtimestamp(657224281)
+                m["message_id"] = message.id
+                m["user_id"] = 0
+                m["user_name"] = ""
+                m["nick_name"] = ""
+                m["reply_to_msg_id"] = 0
+                m["from_name"] = ""
+                m["from_time"] = datetime.datetime.fromtimestamp(657224281)
                 if message.sender:
-                    m['user_id'] = message.sender.id
+                    m["user_id"] = message.sender.id
                     username = message.sender.username
-                    username = username if username else ''
-                    m['user_name'] = message.sender.username
+                    username = username if username else ""
+                    m["user_name"] = message.sender.username
                     if isinstance(message.sender, Channel):
                         first_name = message.sender.title
-                        last_name = ''
+                        last_name = ""
                     else:
                         first_name = message.sender.first_name
                         last_name = message.sender.last_name
-                        first_name = first_name if first_name else ''
-                        last_name = ' '+ last_name if last_name else ''
-                    m['nick_name'] = '{0}{1}'.format(first_name, last_name)
+                        first_name = first_name if first_name else ""
+                        last_name = " " + last_name if last_name else ""
+                    m["nick_name"] = "{0}{1}".format(first_name, last_name)
                 if message.is_reply:
-                    m['reply_to_msg_id'] = message.reply_to_msg_id
+                    m["reply_to_msg_id"] = message.reply_to_msg_id
                 if message.forward:
-                    m['from_name'] = message.forward.from_name
-                    m['from_time'] = message.forward.date
-                m['chat_id'] = chat.id
+                    m["from_name"] = message.forward.from_name
+                    m["from_time"] = message.forward.date
+                m["chat_id"] = chat.id
                 # m['postal_time'] = message.date.strftime('%Y-%m-%d %H:%M:%S')
-                m['postal_time'] = message.date
-                m['message'] = content
+                m["postal_time"] = message.date
+                m["message"] = content
                 tick += 1
                 if tick >= waterline:
                     tick = 0
@@ -277,4 +302,4 @@ class TelegramAPIs(object):
                     time.sleep(waterline)
                 count += 1
                 yield m
-        print('total: %d' % count)
+        print("total: %d" % count)

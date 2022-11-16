@@ -1,4 +1,23 @@
-# NextB 爬虫
+# -*- coding: utf-8 -*-
+# @Time     : 2022/11/16 17:12:14
+# @Author   : ddvv
+# @Site     : https://ddvvmmzz.github.io
+# @File     : setup.py
+# @Software : Visual Studio Code
+# @WeChat   : NextB
+
+
+import setuptools
+
+
+def do_setup(**kwargs):
+    try:
+        setuptools.setup(**kwargs)
+    except (SystemExit, Exception) as e:
+        exit(1)
+
+
+long_description = """
 
 基于scrapy框架的爬虫项目
 
@@ -67,3 +86,42 @@ pip install NextBSpiders
 ## 注意事项
 
 1. 每个telegram爬虫配置文件中的`session_name`和`sqlite_db_name`需要独立使用，避免出现`sqlite`数据库读写暂用问题
+"""
+
+do_setup(
+    name="NextBSpiders",
+    version="1.0.0",
+    author="ddvv",
+    author_email="dadavivi512@gmail.com",
+    description="基于scrapy的telegram爬虫",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/a232319779/NextBSpiders",
+    packages=setuptools.find_packages(exclude=["tests"]),
+    entry_points={
+        "console_scripts": [
+            "nextb-telegram-run-spider = NextBSpiders.cli.telegram_run_spider:run",
+            "nextb-telegram-create-table = NextBSpiders.cli.telegram_create_table:run",
+            "nextb-telegram-clear-dialog = NextBSpiders.cli.telegram_clear_dialog:run",
+            "nextb-telegram-get-dialog = NextBSpiders.cli.telegram_get_dialog:run",
+            "nextb-telegram-get-message = NextBSpiders.cli.telegram_get_message:run",
+        ],
+    },
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
+    python_requires=">=3.6",
+    keywords=[],
+    license="MIT",
+    include_package_data=True,
+    install_requires=[
+        "Scrapy==2.6.1",
+        "setuptools==58.0.4",
+        "SQLAlchemy==1.4.31",
+        "Telethon==1.24.0",
+        "Twisted==22.4.0",
+        "pysocks==1.7.1",
+    ],
+)

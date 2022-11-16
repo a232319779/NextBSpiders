@@ -1,0 +1,17 @@
+{
+    "api_id": "",
+    "api_hash": "",
+    "session_name": "c:/xxxx/nextb_binance_test_session.session",
+    "sqlite_db_name": "C:/xxxx/binance_test_2022_11.db",
+    "proxy": {
+        "protocal": "socks5",
+        "ip": "127.0.0.1",
+        "port": 7890
+    },
+    "group": {
+        "group_id": 1136071376,
+        "limit": 30,
+        "last_message_id": -1,
+        "offset_date": ""
+    }
+}
