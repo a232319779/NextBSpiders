@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# @Time     : 2022/11/16 11:06:11
+# @Time     : 2022/11/16 15:24:14
 # @Author   : ddvv
 # @Site     : https://ddvvmmzz.github.io
-# @File     : clear_telegram_dialog.py
+# @File     : telegram_clear_dialog.py
 # @Software : Visual Studio Code
 # @WeChat   : NextB
 
@@ -56,15 +56,22 @@ def telegram_clear_dialog(config_file, all):
     config_js = json.loads(data)
     ta = TelegramAPIs()
     session_name = config_js.get("session_name")
-    api_id=config_js.get("api_id")
-    api_hash=config_js.get("api_hash")
+    api_id = config_js.get("api_id")
+    api_hash = config_js.get("api_hash")
+    proxy = config_js.get("proxy", {})
+    clash_proxy = None
+    # 如果配置代理
+    if proxy:
+        protocal = proxy.get("protocal", "socks5")
+        proxy_ip = proxy.get("ip", "127.0.0.1")
+        proxy_port = proxy.get("port", 7890)
+        clash_proxy = (protocal, proxy_ip, proxy_port)
     ta.init_client(
-        session_name=session_name,
-        api_id=api_id,
-        api_hash=api_hash
+        session_name=session_name, api_id=api_id, api_hash=api_hash, proxy=clash_proxy
     )
     # 删除所有聊天对话框
     ta.delete_all_dialog(is_all=all)
+    ta.close_client()
 
 
 def run():

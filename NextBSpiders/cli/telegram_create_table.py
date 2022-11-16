@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# @Time     : 2022/11/16 11:05:12
+# @Time     : 2022/11/16 15:24:23
 # @Author   : ddvv
 # @Site     : https://ddvvmmzz.github.io
-# @File     : create_table.py
+# @File     : telegram_create_table.py
 # @Software : Visual Studio Code
 # @WeChat   : NextB
+
 
 __doc__ = """
 创建telegram消息表
@@ -13,6 +14,7 @@ __doc__ = """
 import argparse
 import json
 from NextBSpiders.libs.nextb_spier_db import NextBTGSQLITEDB
+
 
 def parse_cmd():
     """
@@ -37,9 +39,10 @@ def parse_cmd():
 
     return args
 
+
 def telegram_create_table(config_file):
     # 加载配置文件
-    with open(config_file, 'r') as f:
+    with open(config_file, "r") as f:
         data = f.read()
     config_js = json.loads(data)
     nb = NextBTGSQLITEDB(db_name=config_js.get("sqlite_db_name", "tg_sqlite.db"))

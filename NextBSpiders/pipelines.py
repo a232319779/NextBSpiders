@@ -19,7 +19,9 @@ from NextBSpiders.configs.postgreconfig import db_config
 
 class AppspiderPostgreslPipeline(object):
     def __init__(self):
-        self.template_conn_str = "postgresql+psycopg2://{username}:{password}@{address}:{port}/{db_name}"
+        self.template_conn_str = (
+            "postgresql+psycopg2://{username}:{password}@{address}:{port}/{db_name}"
+        )
         self.conn_str = self.template_conn_str.format(**db_config)
         self.session_maker = None
         self.datas = []
@@ -28,23 +30,24 @@ class AppspiderPostgreslPipeline(object):
     def open_spider(self, spider):
         engine = create_engine(self.conn_str)
         if self.session_maker is None:
-            self.session_maker = scoped_session(sessionmaker(autoflush=True, autocommit=False,
-                                                             bind=engine))
+            self.session_maker = scoped_session(
+                sessionmaker(autoflush=True, autocommit=False, bind=engine)
+            )
 
     def process_item(self, item, spider):
         if len(self.datas) >= self.push_number:
             for data in self.datas:
                 new_message = TelegramMessage()
-                new_message.message_id = data.get('message_id', -1)
-                new_message.chat_id = data.get('chat_id', -1)
-                new_message.user_id = data.get('user_id', -1)
-                new_message.user_name = data.get('user_name', '')
-                new_message.nick_name = data.get('nick_name', '')
-                new_message.postal_time = data.get('postal_time')
-                new_message.reply_to_msg_id = data.get('reply_to_msg_id', -1)
-                new_message.from_name = data.get('from_name', '')
-                new_message.from_time = data.get('from_time')
-                new_message.message = data.get('message', '')
+                new_message.message_id = data.get("message_id", -1)
+                new_message.chat_id = data.get("chat_id", -1)
+                new_message.user_id = data.get("user_id", -1)
+                new_message.user_name = data.get("user_name", "")
+                new_message.nick_name = data.get("nick_name", "")
+                new_message.postal_time = data.get("postal_time")
+                new_message.reply_to_msg_id = data.get("reply_to_msg_id", -1)
+                new_message.from_name = data.get("from_name", "")
+                new_message.from_time = data.get("from_time")
+                new_message.message = data.get("message", "")
                 self.session_maker.add(new_message)
             self.session_maker.commit()
             self.datas = []
@@ -57,16 +60,16 @@ class AppspiderPostgreslPipeline(object):
         if len(self.datas) > 0:
             for data in self.datas:
                 new_message = TelegramMessage()
-                new_message.message_id = data.get('message_id', -1)
-                new_message.chat_id = data.get('chat_id', -1)
-                new_message.user_id = data.get('user_id', -1)
-                new_message.user_name = data.get('user_name', '')
-                new_message.nick_name = data.get('nick_name', '')
-                new_message.postal_time = data.get('postal_time')
-                new_message.reply_to_msg_id = data.get('reply_to_msg_id', -1)
-                new_message.from_name = data.get('from_name', '')
-                new_message.from_time = data.get('from_time')
-                new_message.message = data.get('message', '')
+                new_message.message_id = data.get("message_id", -1)
+                new_message.chat_id = data.get("chat_id", -1)
+                new_message.user_id = data.get("user_id", -1)
+                new_message.user_name = data.get("user_name", "")
+                new_message.nick_name = data.get("nick_name", "")
+                new_message.postal_time = data.get("postal_time")
+                new_message.reply_to_msg_id = data.get("reply_to_msg_id", -1)
+                new_message.from_name = data.get("from_name", "")
+                new_message.from_time = data.get("from_time")
+                new_message.message = data.get("message", "")
                 self.session_maker.add(new_message)
             self.session_maker.commit()
             self.datas = []
@@ -75,7 +78,7 @@ class AppspiderPostgreslPipeline(object):
 
 class AppspiderTxtPipeline(object):
     def open_spider(self, spider):
-        self.file = open(spider.name + '.txt', 'a')
+        self.file = open(spider.name + ".txt", "a")
 
     def close_spider(self, spider):
         self.file.close()
@@ -85,12 +88,13 @@ class AppspiderTxtPipeline(object):
         self.file.write(line)
         return item
 
+
 class AppspiderSqlitePipeline(object):
     @classmethod
     def from_crawler(cls, crawler):
         # Here, you get whatever value was passed through the "db_name" parameter
         settings = crawler.settings
-        db_name = settings.get('db_name')
+        db_name = settings.get("db_name")
 
         # Instantiate the pipeline with your table
         return cls(db_name)
@@ -104,23 +108,24 @@ class AppspiderSqlitePipeline(object):
     def open_spider(self, spider):
         engine = create_engine(self.conn_str)
         if self.session_maker is None:
-            self.session_maker = scoped_session(sessionmaker(autoflush=True, autocommit=False,
-                                                             bind=engine))
+            self.session_maker = scoped_session(
+                sessionmaker(autoflush=True, autocommit=False, bind=engine)
+            )
 
     def process_item(self, item, spider):
         if len(self.datas) >= self.push_number:
             for data in self.datas:
                 new_message = TelegramMessage()
-                new_message.message_id = data.get('message_id', -1)
-                new_message.chat_id = data.get('chat_id', -1)
-                new_message.user_id = data.get('user_id', -1)
-                new_message.user_name = data.get('user_name', '')
-                new_message.nick_name = data.get('nick_name', '')
-                new_message.postal_time = data.get('postal_time')
-                new_message.reply_to_msg_id = data.get('reply_to_msg_id', -1)
-                new_message.from_name = data.get('from_name', '')
-                new_message.from_time = data.get('from_time')
-                new_message.message = data.get('message', '')
+                new_message.message_id = data.get("message_id", -1)
+                new_message.chat_id = data.get("chat_id", -1)
+                new_message.user_id = data.get("user_id", -1)
+                new_message.user_name = data.get("user_name", "")
+                new_message.nick_name = data.get("nick_name", "")
+                new_message.postal_time = data.get("postal_time")
+                new_message.reply_to_msg_id = data.get("reply_to_msg_id", -1)
+                new_message.from_name = data.get("from_name", "")
+                new_message.from_time = data.get("from_time")
+                new_message.message = data.get("message", "")
                 self.session_maker.add(new_message)
             self.session_maker.commit()
             self.datas = []
@@ -133,16 +138,16 @@ class AppspiderSqlitePipeline(object):
         if len(self.datas) > 0:
             for data in self.datas:
                 new_message = TelegramMessage()
-                new_message.message_id = data.get('message_id', -1)
-                new_message.chat_id = data.get('chat_id', -1)
-                new_message.user_id = data.get('user_id', -1)
-                new_message.user_name = data.get('user_name', '')
-                new_message.nick_name = data.get('nick_name', '')
-                new_message.postal_time = data.get('postal_time')
-                new_message.reply_to_msg_id = data.get('reply_to_msg_id', -1)
-                new_message.from_name = data.get('from_name', '')
-                new_message.from_time = data.get('from_time')
-                new_message.message = data.get('message', '')
+                new_message.message_id = data.get("message_id", -1)
+                new_message.chat_id = data.get("chat_id", -1)
+                new_message.user_id = data.get("user_id", -1)
+                new_message.user_name = data.get("user_name", "")
+                new_message.nick_name = data.get("nick_name", "")
+                new_message.postal_time = data.get("postal_time")
+                new_message.reply_to_msg_id = data.get("reply_to_msg_id", -1)
+                new_message.from_name = data.get("from_name", "")
+                new_message.from_time = data.get("from_time")
+                new_message.message = data.get("message", "")
                 self.session_maker.add(new_message)
             self.session_maker.commit()
             self.datas = []

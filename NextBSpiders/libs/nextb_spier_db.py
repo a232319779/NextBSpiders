@@ -9,8 +9,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from NextBSpiders.spiders.telegramspider.telegramAPIs import TelegramAPIs
 from NextBSpiders.items import TelegramMessage, Base
+
 
 class NextBTGSQLITEDB:
     def __init__(self, db_name):

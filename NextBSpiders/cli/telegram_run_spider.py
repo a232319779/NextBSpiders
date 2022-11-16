@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# @Time     : 2022/11/11 17:50:16
+# @Time     : 2022/11/16 15:24:41
 # @Author   : ddvv
 # @Site     : https://ddvvmmzz.github.io
-# @File     : run_spiders_sqlite.py
+# @File     : telegram_run_spider.py
 # @Software : Visual Studio Code
 # @WeChat   : NextB
+
 
 __doc__ = """
 NextBSpider执行telegram爬虫命令行工具
@@ -15,6 +16,7 @@ import json
 import base64
 from scrapy import cmdline
 from NextBSpiders.libs.nextb_spier_db import NextBTGSQLITEDB
+
 
 def parse_cmd():
     """
@@ -39,9 +41,10 @@ def parse_cmd():
 
     return args
 
+
 def telegram_run_spider(config_file):
     # 加载配置文件
-    with open(config_file, 'r') as f:
+    with open(config_file, "r") as f:
         data = f.read()
     config_js = json.loads(data)
     # 初始化数据库
@@ -62,10 +65,10 @@ def telegram_run_spider(config_file):
     )
     cmdline.execute(cmd.split())
 
+
 def run():
     """
     CLI命令行入口
     """
     args = parse_cmd()
     telegram_run_spider(args.config)
-

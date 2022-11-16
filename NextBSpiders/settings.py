@@ -9,13 +9,13 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'NextBSpiders'
+BOT_NAME = "NextBSpiders"
 
-SPIDER_MODULES = ['NextBSpiders.spiders']
-NEWSPIDER_MODULE = 'NextBSpiders.spiders'
+SPIDER_MODULES = ["NextBSpiders.spiders"]
+NEWSPIDER_MODULE = "NextBSpiders.spiders"
 
 # LOG_LEVEL
-LOG_LEVEL = 'WARNING'
+LOG_LEVEL = "WARNING"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'NextBSpiders (+http://www.yourdomain.com)'
@@ -43,8 +43,7 @@ COOKIES_ENABLED = False
 # TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-DEFAULT_REQUEST_HEADERS = {
-}
+DEFAULT_REQUEST_HEADERS = {}
 
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
@@ -55,7 +54,7 @@ DEFAULT_REQUEST_HEADERS = {
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    'NextBSpiders.middlewares.AppspiderDownloaderMiddleware': 543,
+    "NextBSpiders.middlewares.AppspiderDownloaderMiddleware": 543,
 }
 
 # Enable or disable extensions
@@ -69,7 +68,7 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     # 'NextBSpiders.pipelines.AppspiderPostgreslPipeline': 300,
     # 'NextBSpiders.pipelines.AppspiderTxtPipeline': 300,
-    'NextBSpiders.pipelines.AppspiderSqlitePipeline': 300,
+    "NextBSpiders.pipelines.AppspiderSqlitePipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
