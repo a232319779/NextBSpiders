@@ -13,5 +13,5 @@
 |命令|功能|备注|
 |----|----|----|
 |nextb-telegram-run-spider|执行telegram爬虫|如`nextb-telegram-run-spider.exe -c .\my.json`|
-|nextb-telegram-create-table|创建telegram数据表|如`nextb-telegram-run-spider.exe -c .\my.json`|
-|nextb-telegram-clear-dialog|清理telegram对话框|如`nextb-telegram-run-spider.exe -c .\my.json`|
+|nextb-telegram-create-table|创建telegram数据表|如`nextb-telegram-create-table.exe -c .\my.json`|
+|nextb-telegram-clear-dialog|清理telegram对话框|如`nextb-telegram-clear-dialog.exe -c .\my.json`|
