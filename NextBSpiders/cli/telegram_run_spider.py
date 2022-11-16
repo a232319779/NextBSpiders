@@ -11,12 +11,29 @@ __doc__ = """
 NextBSpider执行telegram爬虫命令行工具
 """
 
+import os
 import argparse
 import json
 import base64
 from scrapy import cmdline
 from NextBSpiders.libs.nextb_spier_db import NextBTGSQLITEDB
 
+scrapy_cfg = """# Automatically created by: scrapy startproject
+#
+# For more information about the [deploy] section see:
+# https://scrapyd.readthedocs.io/en/latest/deploy.html
+
+[settings]
+default = NextBSpiders.settings
+"""
+
+def process_scrapy_cfg_file():
+    current_dir = os.path.abspath(".")
+    scrapy_file = os.path.join(current_dir, "scrapy.cfg")
+    if not os.path.exists(scrapy_file):
+        with open(scrapy_file, "w") as f:
+            f.write(scrapy_cfg)
+            f.flush()
 
 def parse_cmd():
     """
@@ -63,6 +80,7 @@ def telegram_run_spider(config_file):
         param_base64=param_base64,
         db_name=config_js.get("sqlite_db_name", "tg_sqlite.db"),
     )
+    process_scrapy_cfg_file()
     cmdline.execute(cmd.split())
 
 
