@@ -14,9 +14,9 @@ from scrapy import cmdline
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from appspider.spiders.telegramspider.telegramAPIs import TelegramAPIs
-from appspider.items import TelegramMessage, Base
-from appspider.configs.postgreconfig import db_config
+from NextBSpiders.spiders.telegramspider.telegramAPIs import TelegramAPIs
+from NextBSpiders.items import TelegramMessage, Base
+from NextBSpiders.configs.postgreconfig import db_config
 
 
 class NextBTGDB:

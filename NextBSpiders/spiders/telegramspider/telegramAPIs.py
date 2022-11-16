@@ -107,10 +107,15 @@ class TelegramAPIs(object):
 
         return result_json
 
-    def delete_all_dialog(self):
+    def delete_all_dialog(self, is_all=0):
         for dialog in self.client.get_dialogs():
+            # like "4721 4720"、"5909 5908"
+            name = dialog.name
+            is_new_user = False
+            if " " in name and ("1" in name or "3" in name or "6" in name):
+                is_new_user = True
             # 退出频道或群组
-            if hasattr(dialog.entity, 'title'):
+            if is_all and hasattr(dialog.entity, 'title'):
                 chat = dialog.entity
                 self.client.delete_dialog(chat)
                 print('已离开<{}>群组'.format(dialog.entity.title))
@@ -119,15 +124,16 @@ class TelegramAPIs(object):
                 chat = dialog.entity
                 self.client.delete_dialog(chat)
                 print('已删除Deleted Account用户对话框')
-            elif ' ' in dialog.name:
+            elif is_new_user:
+                chat = dialog.entity
+                self.client.delete_dialog(chat)
+                print('已删除{}用户对话框'.format(dialog.name))
+            elif is_all:
                 chat = dialog.entity
                 self.client.delete_dialog(chat)
                 print('已删除{}用户对话框'.format(dialog.name))
             else:
-                chat = dialog.entity
-                self.client.delete_dialog(chat)
-                print('已删除{}用户对话框'.format(dialog.name))
-
+                pass
 
 
     def get_me(self):

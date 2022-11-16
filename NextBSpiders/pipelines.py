@@ -9,8 +9,8 @@ import json
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from appspider.items import TelegramMessage
-from appspider.configs.postgreconfig import db_config
+from NextBSpiders.items import TelegramMessage
+from NextBSpiders.configs.postgreconfig import db_config
 
 """
 后续需要将所有的输出结果统一到一个pipeline里，根据爬虫选择输出方式

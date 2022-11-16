@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for appspider project
+# Scrapy settings for NextBSpiders project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,16 +9,16 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'appspider'
+BOT_NAME = 'NextBSpiders'
 
-SPIDER_MODULES = ['appspider.spiders']
-NEWSPIDER_MODULE = 'appspider.spiders'
+SPIDER_MODULES = ['NextBSpiders.spiders']
+NEWSPIDER_MODULE = 'NextBSpiders.spiders'
 
 # LOG_LEVEL
 LOG_LEVEL = 'WARNING'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-# USER_AGENT = 'appspider (+http://www.yourdomain.com)'
+# USER_AGENT = 'NextBSpiders (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -49,13 +49,13 @@ DEFAULT_REQUEST_HEADERS = {
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 # SPIDER_MIDDLEWARES = {
-#    'appspider.middlewares.AppspiderSpiderMiddleware': 543,
+#    'NextBSpiders.middlewares.AppspiderSpiderMiddleware': 543,
 # }
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    'appspider.middlewares.AppspiderDownloaderMiddleware': 543,
+    'NextBSpiders.middlewares.AppspiderDownloaderMiddleware': 543,
 }
 
 # Enable or disable extensions
@@ -67,9 +67,9 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    # 'appspider.pipelines.AppspiderPostgreslPipeline': 300,
-    # 'appspider.pipelines.AppspiderTxtPipeline': 300,
-    'appspider.pipelines.AppspiderSqlitePipeline': 300,
+    # 'NextBSpiders.pipelines.AppspiderPostgreslPipeline': 300,
+    # 'NextBSpiders.pipelines.AppspiderTxtPipeline': 300,
+    'NextBSpiders.pipelines.AppspiderSqlitePipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

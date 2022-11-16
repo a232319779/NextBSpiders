@@ -12,7 +12,7 @@ import scrapy
 import base64
 import json
 from abc import ABC
-from appspider.spiders.telegramspider.telegramAPIs import TelegramAPIs
+from NextBSpiders.spiders.telegramspider.telegramAPIs import TelegramAPIs
 
 
 class TelegramScanMessages(scrapy.Spider, ABC):
