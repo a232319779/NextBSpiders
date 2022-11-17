@@ -11,8 +11,9 @@ __doc__ = """
 创建telegram消息表
 """
 
-import argparse
 import json
+import argparse
+from NextBSpiders import NEXTBSPIDER_VERSION
 from NextBSpiders.libs.nextb_spier_db import NextBTGSQLITEDB
 
 
@@ -22,7 +23,7 @@ def parse_cmd():
     """
     parser = argparse.ArgumentParser(
         prog="nextb-telegram-create-table",
-        description="NextBSpider创建telegram数据表。版本号：1.0.0",
+        description="NextBSpider创建telegram数据表。版本号：{}".format(NEXTBSPIDER_VERSION),
         epilog="使用方式：nextb-telegram-create-table -c $config_file",
     )
     parser.add_argument(

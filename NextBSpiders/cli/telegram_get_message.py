@@ -12,8 +12,9 @@ __doc__ = """
 """
 
 import json
-import datetime
 import argparse
+import datetime
+from NextBSpiders import NEXTBSPIDER_VERSION
 from NextBSpiders.spiders.telegramspider.telegramAPIs import TelegramAPIs
 
 
@@ -23,7 +24,7 @@ def parse_cmd():
     """
     parser = argparse.ArgumentParser(
         prog="nextb-telegram-get-message",
-        description="NextBSpider获取telegram的聊天消息。版本号：1.0.0",
+        description="NextBSpider获取telegram的聊天消息。版本号：{}".format(NEXTBSPIDER_VERSION),
         epilog="使用方式：nextb-telegram-get-message -c $config_file",
     )
     parser.add_argument(
