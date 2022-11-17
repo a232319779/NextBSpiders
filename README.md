@@ -6,7 +6,7 @@
 
 在使用Telegram的爬虫之前，需要获取自己telegram的`api_id`和`api_hash`：
 
-1. 使用开发者的帐户（如电话号码）登录到Telegram帐户，登录地址：(https://my.telegram.org/auth)[https://my.telegram.org/auth]
+1. 使用开发者的帐户（如电话号码）登录到Telegram帐户，登录地址：[https://my.telegram.org/auth](https://my.telegram.org/auth)
 2. 单击API开发工具
 3. 在出现创建新应用程序窗口中，填写申请详情。不用输入任何URL，只用修改两个字段（`App title`和`Short name`）
 4. 最后单击创建应用程序，生成`api_id`和`api_hash`。申请的`api_id`和`api_hash`是永久的，自己注意保密。
