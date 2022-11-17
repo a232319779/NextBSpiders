@@ -5,3 +5,5 @@
 # @File    :   __init__.py
 # @Software:   Visual Studio Code
 # @Desc    :   None
+
+NEXTBSPIDER_VERSION="1.1.0"

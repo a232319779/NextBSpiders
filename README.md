@@ -53,7 +53,7 @@ pip install NextBSpiders
 |nextb-telegram-clear-dialog|清理telegram对话框|如`nextb-telegram-clear-dialog.exe -c .\my.json`|
 |nextb-telegram-get-dialog|获取telegram对话框|如`nextb-telegram-get-dialog.exe -c .\my.json`|
 |nextb-telegram-get-message|获取telegramq群组聊天消息|如`nextb-telegram-get-message.exe -c .\my.json`|
-
+|nextb-generate-user-message-csv|按用户统计每天的消息数量|如`nextb-generate-user-message-csv.exe -d $db_name`|
 ## 使用方式
 
 1. 按需求配置好`config.json`文件，此时必填项包括：`api_id`、`api_hash`、`session_name`、`sqlite_db_name`，`proxy`代理选项根据实际网络情况填写，**如果不需要代理，则`proxy`填空字典：`"proxy": {}`**

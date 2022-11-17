@@ -12,10 +12,11 @@ NextBSpider执行telegram爬虫命令行工具
 """
 
 import os
-import argparse
 import json
 import base64
+import argparse
 from scrapy import cmdline
+from NextBSpiders import NEXTBSPIDER_VERSION
 from NextBSpiders.libs.nextb_spier_db import NextBTGSQLITEDB
 
 scrapy_cfg = """# Automatically created by: scrapy startproject
@@ -41,7 +42,7 @@ def parse_cmd():
     """
     parser = argparse.ArgumentParser(
         prog="nextb-telegram-run-spider",
-        description="NextBSpider执行telegram爬虫命令行工具。版本号：1.0.0",
+        description="NextBSpider执行telegram爬虫命令行工具。{}".format(NEXTBSPIDER_VERSION),
         epilog="使用方式：nextb-telegram-run-spider -c $config_file",
     )
     parser.add_argument(
