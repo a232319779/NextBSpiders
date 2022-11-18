@@ -21,7 +21,7 @@ from telethon.tl.functions.messages import (
 from telethon.tl.functions.contacts import DeleteContactsRequest, GetContactsRequest
 from telethon.tl.types import ChatInviteAlready, ChatInvite
 from telethon.tl.types import Message
-from telethon.tl.types import Channel, Chat
+from telethon.tl.types import Channel, Chat, ChannelForbidden
 
 
 logging.basicConfig(level=logging.INFO)
@@ -274,10 +274,13 @@ class TelegramAPIs(object):
                 m["from_time"] = datetime.datetime.fromtimestamp(657224281)
                 if message.sender:
                     m["user_id"] = message.sender.id
-                    username = message.sender.username
-                    username = username if username else ""
-                    m["user_name"] = message.sender.username
-                    if isinstance(message.sender, Channel):
+                    if isinstance(message.sender, ChannelForbidden):
+                        username = ""
+                    else:
+                        username = message.sender.username
+                        username = username if username else ""
+                    m["user_name"] = username
+                    if isinstance(message.sender, Channel) or isinstance(message.sender, ChannelForbidden):
                         first_name = message.sender.title
                         last_name = ""
                     else:
