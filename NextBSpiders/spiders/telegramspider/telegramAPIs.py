@@ -320,13 +320,21 @@ class TelegramAPIs(object):
                 yield m
         print("total: %d" % count)
 
-    def download_user_photo(self, chat_id, nick_names, download_path="./"):
+    def download_user_photo(self, chat_id, nick_names, download_path="./", compress=0):
         """
         通过用户昵称下载用户头像
         :param chat: 频道/群组对象
         :param nick_names: 用户昵称列表
         download_path: 头像保存路径
+        compress: 是否压缩头像至 64 * 64大小
         """
+        use_pil_image = True
+        if compress:
+            try:
+                from PIL import Image
+            except Exception as e:
+                print("检测到未安装PIL库，无法对头像进行缩放处理，保存原始头像。若要保存缩放后的头像，请安装PIL，安装命令：pip install Pillow")
+                use_pil_image = False
         chat = self.get_dialog(chat_id, is_more=True)
         for nick_name in nick_names:
             try:
@@ -350,11 +358,17 @@ class TelegramAPIs(object):
             for entity in participants.users:
                 member_id = entity.id
                 if entity.photo:
-                    photo_down = os.path.join(download_path, "{}.jfif".format(member_id))
+                    photo_down = os.path.join(download_path, "{}.jpg".format(member_id))
                     self.client.download_profile_photo(
                         entity, file=photo_down, download_big=False
                     )
-                    print("《{}》用户头像保存至：{}".format(nick_name, photo_down))
+                    if compress and use_pil_image:
+                        picture = Image.open(photo_down)
+                        picture = picture.resize((64, 64))
+                        picture.save(photo_down)
+                        print("《{}》用户压缩头像（64 * 64）保存至：{}".format(nick_name, photo_down))
+                    else:
+                        print("《{}》用户原始头像保存至：{}".format(nick_name, photo_down))
                 else:
                     print("《{}》用户没有使用自定义头像。".format(nick_name))
 

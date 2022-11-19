@@ -70,6 +70,15 @@ def parse_cmd():
         action="store",
         default="./",
     )
+    parser.add_argument(
+        "-o",
+        "--compress",
+        help="设置用户头像是否压缩保存，默认值为0，表示不压缩。非0表示压缩至64*64大小保存。",
+        type=int,
+        dest="compress",
+        action="store",
+        default=0,
+    )
 
     args = parser.parse_args()
 
@@ -109,7 +118,13 @@ def telegram_get_user_photo(args):
     group = config_js.get("group")
     chat_id = group.get("group_id")
     download_path = args.path
-    ta.download_user_photo(chat_id=chat_id, nick_names=nick_names, download_path=download_path)
+    compress = args.compress
+    ta.download_user_photo(
+        chat_id=chat_id,
+        nick_names=nick_names,
+        download_path=download_path,
+        compress=compress,
+    )
     ta.close_client()
 
 
