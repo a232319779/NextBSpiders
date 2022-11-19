@@ -55,6 +55,7 @@ do_setup(
             "nextb-telegram-get-dialog = NextBSpiders.cli.telegram_get_dialog:run",
             "nextb-telegram-get-message = NextBSpiders.cli.telegram_get_message:run",
             "nextb-generate-user-message-csv = NextBSpiders.cli.generate_user_message_csv:run",
+            "nextb-telegram-get-user-photo = NextBSpiders.cli.telegram_get_user_photo:run",
         ],
     },
     classifiers=[
