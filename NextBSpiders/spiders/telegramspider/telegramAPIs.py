@@ -320,7 +320,7 @@ class TelegramAPIs(object):
                 yield m
         print("total: %d" % count)
 
-    def scan_user(self, chat_id, nick_names, download_path="./"):
+    def download_user_photo(self, chat_id, nick_names, download_path="./"):
         """
         通过用户昵称下载用户头像
         :param chat: 频道/群组对象

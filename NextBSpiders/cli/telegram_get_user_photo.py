@@ -109,7 +109,7 @@ def telegram_get_user_photo(args):
     group = config_js.get("group")
     chat_id = group.get("group_id")
     download_path = args.path
-    ta.scan_user(chat_id=chat_id, nick_names=nick_names, download_path=download_path)
+    ta.download_user_photo(chat_id=chat_id, nick_names=nick_names, download_path=download_path)
     ta.close_client()
 
 
