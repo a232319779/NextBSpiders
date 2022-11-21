@@ -8,8 +8,23 @@
 
 import datetime
 import argparse
+import urllib
 from NextBSpiders import NEXTBSPIDER_VERSION
 from NextBSpiders.libs.nextb_spier_db import NextBTGSQLITEDB
+
+
+def check_url_valid(url):
+    try:
+        urllib.request.urlopen(url)
+        print("{}：检测到该用户存在头像".format(url))
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            print("{}：未发现该用户头像，使用默认头像".format(url))
+            return False
+    except Exception as e:
+        print("{}：头像检测失败，使用默认头像".format(url))
+
+    return True
 
 
 def parse_cmd():
@@ -57,6 +72,24 @@ def parse_cmd():
         action="store",
         default=100,
     )
+    parser.add_argument(
+        "-u",
+        "--url",
+        help="指定用户头像的url地址，可以为空，形如：https://raw.githubusercontent.com/a232319779/NextBSpiderPhotos/main/photos/1144411934",
+        type=str,
+        dest="url",
+        action="store",
+        default="https://raw.githubusercontent.com/a232319779/NextBSpiderPhotos/main/photos/1144411934",
+    )
+    parser.add_argument(
+        "-de",
+        "--detect",
+        help="检测用户头像在git上是否存在，默认值为0，表示不检测。（检测会很耗时）",
+        type=int,
+        dest="detect",
+        action="store",
+        default=0,
+    )
 
     args = parser.parse_args()
 
@@ -68,6 +101,8 @@ def geneerate_user_message(args):
     offset_time_str = args.time
     csv_file = args.csv_file
     cut_off = args.cutoff
+    url = args.url
+    detect = args.detect
     db = NextBTGSQLITEDB(db_name=db_name)
     offset_date = datetime.datetime.strptime(offset_time_str, "%Y-%m-%d %H:%M:%S")
     user_id_count = dict()
@@ -110,28 +145,37 @@ def geneerate_user_message(args):
         day_str = day.strftime("%Y-%m-%d")
         day_list.append(day_str)
 
-    head = "用户名,{}".format(",".join(day_list))
-    show_datas = list()
+    head = "用户名,头像url,{}".format(",".join(day_list))
+    show_datas = dict()
     for user_id, value in user_id_count.items():
         count = list()
         sum = 0
         for day in day_list:
             sum += value.get(day, 0)
             count.append(str(sum))
+        show_datas[user_id] = count
+    r_datas = list()
+    for user_id, value in show_datas.items():
+        if int(value[-1]) < cut_off:
+            continue
         nick_name = user_id
         for nn in user_id_nickname[user_id]:
             if nn != "":
                 nick_name = nn
                 break
-        data = "{},{}".format(nick_name, ",".join(count))
-        show_datas.append(data)
-    out_datas = [data for data in show_datas if int(data.split(",")[-1]) > cut_off]
+        photo_url = "{}/{}.jpg".format(url, user_id)
+        if detect and not check_url_valid(photo_url):
+            photo_url = "https://raw.githubusercontent.com/a232319779/NextBSpiderPhotos/main/photos/default.jpg"
+        data = "{},{},{}".format(nick_name, photo_url, ",".join(value))
+        r_datas.append(data)
+
+    # out_datas = [data for data in show_datas if int(data.split(",")[-1]) > cut_off]
     with open(csv_file, "w", encoding="utf8") as f:
         f.write(head + "\n")
-        f.write("\n".join(out_datas))
+        f.write("\n".join(r_datas))
         f.flush()
     print("csv文件生成完成，文件保存为：{}...".format(csv_file))
-    print("过滤条数设定为{}时共计筛选{}个用户跨越{}天的聊天数量...".format(cut_off, len(out_datas), dlt_days))
+    print("过滤条数设定为{}时共计筛选{}个用户跨越{}天的聊天数量...".format(cut_off, len(r_datas), dlt_days))
 
 
 def run():
