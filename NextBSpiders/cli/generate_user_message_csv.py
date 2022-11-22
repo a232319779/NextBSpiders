@@ -46,13 +46,22 @@ def parse_cmd():
         default="",
     )
     parser.add_argument(
-        "-t",
-        "--time",
-        help="指定统计的时间偏移。默认值为：1970-01-01 00:00:00，表示获取全部聊天记录",
+        "-bt",
+        "--begin_time",
+        help="指定统计的起始时间。默认值为：1970-01-01 00:00:00",
         type=str,
-        dest="time",
+        dest="begin_time",
         action="store",
         default="1970-01-01 00:00:00",
+    )
+    parser.add_argument(
+        "-et",
+        "--end_time",
+        help="指定统计的结束时间。默认值为空，表示当前时间",
+        type=str,
+        dest="end_time",
+        action="store",
+        default="",
     )
     parser.add_argument(
         "-f",
@@ -98,26 +107,30 @@ def parse_cmd():
 
 def geneerate_user_message(args):
     db_name = args.db_name
-    offset_time_str = args.time
+    begin_time = args.begin_time
+    end_time = args.end_time
     csv_file = args.csv_file
     cut_off = args.cutoff
     url = args.url
     detect = args.detect
     db = NextBTGSQLITEDB(db_name=db_name)
-    offset_date = datetime.datetime.strptime(offset_time_str, "%Y-%m-%d %H:%M:%S")
+    begin_offset_date = datetime.datetime.strptime(begin_time, "%Y-%m-%d %H:%M:%S")
+    end_offset_date = datetime.datetime.now()
+    if end_time:
+        end_offset_date = datetime.datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
     user_id_count = dict()
     user_id_nickname = dict()
     start_time = None
-    end_time = None
+    finish_time = None
     # 统计用户发言数量
     print("开始统计用户发言数量...")
-    for data in db.get_messages(offset_date):
+    for data in db.get_messages(begin_offset_date, end_offset_date):
         user_id = data[0]
         nick_name = data[1]
         postal_time = data[2].strftime("%Y-%m-%d")
         if start_time is None:
             start_time = data[2]
-        end_time = data[2]
+        finish_time = data[2]
         if user_id in user_id_count.keys():
             if postal_time in user_id_count[user_id].keys():
                 user_id_count[user_id][postal_time] += 1
@@ -135,7 +148,7 @@ def geneerate_user_message(args):
     print("开始生成用户发言数量统计csv文件...")
     # 模拟输入起始及截止日期
     begin = datetime.date(start_time.year, start_time.month, start_time.day)
-    end = datetime.date(end_time.year, end_time.month, end_time.day)
+    end = datetime.date(finish_time.year, finish_time.month, finish_time.day)
 
     # 获取时间列表
     day_list = list()
