@@ -47,10 +47,11 @@ class NextBTGSQLITEDB:
         else:
             return {}
 
-    def get_messages(self, search_date):
+    def get_messages(self, begin_offset_date, end_oofset_date):
         """
-        获取所有的消息，用于统计用户每天的发言数目
-        search_date: 查询的时间偏移，默认查询全部消息
+        获取消息，用于统计用户每天的发言数目
+        begin_offset_date: 查询时间的起始偏移，默认查询最早的时间
+        end_offset_date: 查询时间的结束偏移，默认查询当前的时间
         """
         datas = (
             self.session_maker.query(
@@ -58,7 +59,10 @@ class NextBTGSQLITEDB:
                 TelegramMessage.nick_name,
                 TelegramMessage.postal_time,
             )
-            .filter(TelegramMessage.postal_time >= search_date)
+            .filter(
+                TelegramMessage.postal_time >= begin_offset_date,
+                TelegramMessage.postal_time < end_oofset_date,
+            )
             .all()
         )
         for data in datas:
