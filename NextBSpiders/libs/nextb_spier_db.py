@@ -31,6 +31,10 @@ class NextBTGSQLITEDB:
                 sessionmaker(autoflush=True, autocommit=False, bind=self.engine)
             )
 
+    def close(self):
+        self.session_maker.close_all()
+        self.engine.dispose()
+
     # 创建表
     def create_table(self):
         Base.metadata.create_all(self.engine)

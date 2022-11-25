@@ -15,7 +15,7 @@ import os
 import json
 import base64
 import argparse
-from scrapy import cmdline
+# from scrapy import cmdline
 from NextBSpiders import NEXTBSPIDER_VERSION
 from NextBSpiders.libs.nextb_spier_db import NextBTGSQLITEDB
 
@@ -43,16 +43,16 @@ def parse_cmd():
     parser = argparse.ArgumentParser(
         prog="nextb-telegram-run-spider",
         description="NextBSpider执行telegram爬虫命令行工具。{}".format(NEXTBSPIDER_VERSION),
-        epilog="使用方式：nextb-telegram-run-spider -c $config_file",
+        epilog="使用方式：nextb-telegram-run-spider -c $config_file1 -c $config_file2",
     )
     parser.add_argument(
         "-c",
-        "--config",
-        help="设置爬虫配置文件",
+        "--configs",
+        help="设置爬虫配置文件，可指定多个配置文件，默认为空列表",
         type=str,
-        dest="config",
-        action="store",
-        default="./config.json",
+        dest="configs",
+        action="append",
+        default=[],
     )
 
     args = parser.parse_args()
@@ -81,8 +81,8 @@ def telegram_run_spider(config_file):
         param_base64=param_base64,
         db_name=config_js.get("sqlite_db_name", "tg_sqlite.db"),
     )
-    process_scrapy_cfg_file()
-    cmdline.execute(cmd.split())
+    # cmdline.execute(cmd.split())
+    os.system(cmd)
 
 
 def run():
@@ -90,4 +90,6 @@ def run():
     CLI命令行入口
     """
     args = parse_cmd()
-    telegram_run_spider(args.config)
+    process_scrapy_cfg_file()
+    for config in args.configs:
+        telegram_run_spider(config)
