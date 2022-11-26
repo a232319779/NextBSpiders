@@ -6,7 +6,7 @@
 
 在使用Telegram的爬虫之前，需要获取自己telegram的`api_id`和`api_hash`：
 
-1. 使用开发者的帐户（如电话号码）登录到Telegram帐户，登录地址：(https://my.telegram.org/auth)[https://my.telegram.org/auth]
+1. 使用开发者的帐户（如电话号码）登录到Telegram帐户，登录地址：[https://my.telegram.org/auth](https://my.telegram.org/auth)
 2. 单击API开发工具
 3. 在出现创建新应用程序窗口中，填写申请详情。不用输入任何URL，只用修改两个字段（`App title`和`Short name`）
 4. 最后单击创建应用程序，生成`api_id`和`api_hash`。申请的`api_id`和`api_hash`是永久的，自己注意保密。
@@ -53,7 +53,9 @@ pip install NextBSpiders
 |nextb-telegram-clear-dialog|清理telegram对话框|如`nextb-telegram-clear-dialog.exe -c .\my.json`|
 |nextb-telegram-get-dialog|获取telegram对话框|如`nextb-telegram-get-dialog.exe -c .\my.json`|
 |nextb-telegram-get-message|获取telegramq群组聊天消息|如`nextb-telegram-get-message.exe -c .\my.json`|
-
+|nextb-generate-user-message-csv|按用户统计每天的消息数量|如`nextb-generate-user-message-csv.exe -d $db_name`|
+|nextb-telegram-get-user-photo|根据用户昵称下载用户头像|如`nextb-telegram-get-user-photo.exe -c .\my.json -f $nick_files`|
+|nextb-statics-db|统计数据库情况|如`nextb-statics-db.exe -d $db_name`|
 ## 使用方式
 
 1. 按需求配置好`config.json`文件，此时必填项包括：`api_id`、`api_hash`、`session_name`、`sqlite_db_name`，`proxy`代理选项根据实际网络情况填写，**如果不需要代理，则`proxy`填空字典：`"proxy": {}`**

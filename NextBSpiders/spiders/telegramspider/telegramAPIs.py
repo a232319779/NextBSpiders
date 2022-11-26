@@ -7,21 +7,32 @@
 # @Desc    :   None
 
 
+import os
 import time
 import datetime
 import logging
 from random import randint
 from telethon import TelegramClient, sync
-from telethon.tl.functions.channels import GetFullChannelRequest, JoinChannelRequest
+from telethon.tl.functions.channels import (
+    GetFullChannelRequest,
+    JoinChannelRequest,
+    GetParticipantsRequest,
+)
 from telethon.tl.functions.messages import (
     ImportChatInviteRequest,
     CheckChatInviteRequest,
     GetFullChatRequest,
 )
 from telethon.tl.functions.contacts import DeleteContactsRequest, GetContactsRequest
-from telethon.tl.types import ChatInviteAlready, ChatInvite
-from telethon.tl.types import Message
-from telethon.tl.types import Channel, Chat
+from telethon.tl.types import (
+    ChatInviteAlready,
+    ChatInvite,
+    Message,
+    Channel,
+    Chat,
+    ChannelForbidden,
+    ChannelParticipantsSearch,
+)
 
 
 logging.basicConfig(level=logging.INFO)
@@ -274,10 +285,15 @@ class TelegramAPIs(object):
                 m["from_time"] = datetime.datetime.fromtimestamp(657224281)
                 if message.sender:
                     m["user_id"] = message.sender.id
-                    username = message.sender.username
-                    username = username if username else ""
-                    m["user_name"] = message.sender.username
-                    if isinstance(message.sender, Channel):
+                    if isinstance(message.sender, ChannelForbidden):
+                        username = ""
+                    else:
+                        username = message.sender.username
+                        username = username if username else ""
+                    m["user_name"] = username
+                    if isinstance(message.sender, Channel) or isinstance(
+                        message.sender, ChannelForbidden
+                    ):
                         first_name = message.sender.title
                         last_name = ""
                     else:
@@ -303,3 +319,62 @@ class TelegramAPIs(object):
                 count += 1
                 yield m
         print("total: %d" % count)
+
+    def download_user_photo(self, chat_id, nick_names, download_path="./", compress=0):
+        """
+        通过用户昵称下载用户头像
+        :param chat: 频道/群组对象
+        :param nick_names: 用户昵称列表
+        download_path: 头像保存路径
+        compress: 是否压缩头像至 64 * 64大小
+        """
+        use_pil_image = True
+        if compress:
+            try:
+                from PIL import Image
+            except Exception as e:
+                print("检测到未安装PIL库，无法对头像进行缩放处理，保存原始头像。若要保存缩放后的头像，请安装PIL，安装命令：pip install Pillow")
+                use_pil_image = False
+        chat = self.get_dialog(chat_id, is_more=True)
+        for nick_name in nick_names:
+            try:
+                participants = self.client(
+                    GetParticipantsRequest(
+                        chat,
+                        filter=ChannelParticipantsSearch(nick_name),
+                        offset=0,
+                        limit=randint(5, 10),
+                        hash=0,
+                    )
+                )
+            except Exception as e:
+                print("查找《{}》用户失败，失败原因：{}".format(nick_name, str(e)))
+                continue
+
+            if not participants.users:
+                print("未找到《{}》用户。".format(nick_name))
+                continue
+
+            for entity in participants.users:
+                member_id = entity.id
+                if entity.photo:
+                    photo_down = os.path.join(download_path, "{}.jpg".format(member_id))
+                    self.client.download_profile_photo(
+                        entity, file=photo_down, download_big=False
+                    )
+                    if compress and use_pil_image:
+                        picture = Image.open(photo_down)
+                        picture = picture.resize((64, 64))
+                        picture.save(photo_down)
+                        print("《{}》用户压缩头像（64 * 64）保存至：{}".format(nick_name, photo_down))
+                    else:
+                        print("《{}》用户原始头像保存至：{}".format(nick_name, photo_down))
+                else:
+                    print("《{}》用户没有使用自定义头像。".format(nick_name))
+
+            print(
+                "在《{}》群中找到{}个昵称为《{}》的用户，休眠5-10秒".format(
+                    chat.title, len(participants.users), nick_name
+                )
+            )
+            time.sleep(randint(5, 10))

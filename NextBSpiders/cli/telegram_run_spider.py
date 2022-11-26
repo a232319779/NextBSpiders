@@ -12,10 +12,11 @@ NextBSpider执行telegram爬虫命令行工具
 """
 
 import os
-import argparse
 import json
 import base64
-from scrapy import cmdline
+import argparse
+# from scrapy import cmdline
+from NextBSpiders import NEXTBSPIDER_VERSION
 from NextBSpiders.libs.nextb_spier_db import NextBTGSQLITEDB
 
 scrapy_cfg = """# Automatically created by: scrapy startproject
@@ -41,17 +42,17 @@ def parse_cmd():
     """
     parser = argparse.ArgumentParser(
         prog="nextb-telegram-run-spider",
-        description="NextBSpider执行telegram爬虫命令行工具。版本号：1.0.0",
-        epilog="使用方式：nextb-telegram-run-spider -c $config_file",
+        description="NextBSpider执行telegram爬虫命令行工具。{}".format(NEXTBSPIDER_VERSION),
+        epilog="使用方式：nextb-telegram-run-spider -c $config_file1 -c $config_file2",
     )
     parser.add_argument(
         "-c",
-        "--config",
-        help="设置爬虫配置文件",
+        "--configs",
+        help="设置爬虫配置文件，可指定多个配置文件，默认为空列表",
         type=str,
-        dest="config",
-        action="store",
-        default="./config.json",
+        dest="configs",
+        action="append",
+        default=[],
     )
 
     args = parser.parse_args()
@@ -67,8 +68,7 @@ def telegram_run_spider(config_file):
     # 初始化数据库
     nb = NextBTGSQLITEDB(config_js.get("sqlite_db_name", "sqlite.db"))
     # 获取指定群组的最近一条telegram消息的
-    chat_id = config_js.get("group", {}).get("group_id")
-    message_data = nb.search_message(chat_id=chat_id)
+    message_data = nb.get_last_one_message()
     # 如果从数据库查询到消息，则更新配置参数
     if message_data:
         config_js["group"]["last_message_id"] = message_data.message_id
@@ -80,8 +80,8 @@ def telegram_run_spider(config_file):
         param_base64=param_base64,
         db_name=config_js.get("sqlite_db_name", "tg_sqlite.db"),
     )
-    process_scrapy_cfg_file()
-    cmdline.execute(cmd.split())
+    # cmdline.execute(cmd.split())
+    os.system(cmd)
 
 
 def run():
@@ -89,4 +89,6 @@ def run():
     CLI命令行入口
     """
     args = parse_cmd()
-    telegram_run_spider(args.config)
+    process_scrapy_cfg_file()
+    for config in args.configs:
+        telegram_run_spider(config)

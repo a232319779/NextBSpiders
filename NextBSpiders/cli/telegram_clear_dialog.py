@@ -11,8 +11,9 @@ __doc__ = """
 清理telegram的消息框
 """
 
-import argparse
 import json
+import argparse
+from NextBSpiders import NEXTBSPIDER_VERSION
 from NextBSpiders.spiders.telegramspider.telegramAPIs import TelegramAPIs
 
 
@@ -22,7 +23,7 @@ def parse_cmd():
     """
     parser = argparse.ArgumentParser(
         prog="nextb-telegram-clear-dialog",
-        description="NextBSpider清理telegram对话框。版本号：1.0.0",
+        description="NextBSpider清理telegram对话框。版本号：{}".format(NEXTBSPIDER_VERSION),
         epilog="使用方式：nextb-telegram-clear-dialog -c $config_file -a 0",
     )
     parser.add_argument(
