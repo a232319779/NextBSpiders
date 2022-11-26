@@ -68,8 +68,7 @@ def telegram_run_spider(config_file):
     # 初始化数据库
     nb = NextBTGSQLITEDB(config_js.get("sqlite_db_name", "sqlite.db"))
     # 获取指定群组的最近一条telegram消息的
-    chat_id = config_js.get("group", {}).get("group_id")
-    message_data = nb.search_message(chat_id=chat_id)
+    message_data = nb.get_last_one_message()
     # 如果从数据库查询到消息，则更新配置参数
     if message_data:
         config_js["group"]["last_message_id"] = message_data.message_id
